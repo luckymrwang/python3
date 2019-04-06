@@ -22,7 +22,7 @@ result = cursor.fetchall()
 
 # 循环输出结果
 for x in result:
-    print(x[0])
+    print(x)
 
 # 关闭数据库连接
 db.close()

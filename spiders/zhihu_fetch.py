@@ -1,4 +1,6 @@
 import os
+import sys
+import getopt
 import re
 import requests
 import platform
@@ -13,7 +15,7 @@ def download(folder, url):
         # req = requests.get(url)
         # if req.status_code == requests.codes.ok:
         name = url.split('/')[-1]
-        #print("curl {0} > {1}".format(url,folder+'/'+name))
+        # print("curl {0} > {1}".format(url,folder+'/'+name))
         os.system("curl {0} > {1}".format(url, folder+'/'+name))
         # f = open("./"+folder+'/'+name,'wb')
         # f.write(req.content)
@@ -30,7 +32,7 @@ def init(url):
     s.headers.update(ua)
     ret = s.get(url)
     print(ret.status_code)
-    #s.headers.update({"authorization":"oauth c3cef7c66a1843f8b3a9e6a1e3160e20"})
+    # s.headers.update({"authorization":"oauth c3cef7c66a1843f8b3a9e6a1e3160e20"})
     return s
 
 
@@ -49,14 +51,13 @@ def fetch_answer(s, qid, limit, offset):
 def fetch_all_answers(url):
     session = init(url)
     q_id = url.split('/')[-1]
-    exit()
     offset = 0
     limit = 20
     answers = []
     is_end = False
     while not is_end:
         ret = fetch_answer(session, q_id, limit, offset)
-        #total = ret.json()['paging']['totals']
+        # total = ret.json()['paging']['totals']
         answers += ret.json()['data']
         is_end = ret.json()['paging']['is_end']
         print("Offset: ", offset)
@@ -79,12 +80,35 @@ def grep_image_urls(text):
     return imgs
 
 
-url = "https://www.zhihu.com/question/292901966"
-answers = fetch_all_answers(url)
-print("start to download")
-folder = '292901966'
-for ans in answers:
-    imgs = grep_image_urls(ans['content'])
-    for url in imgs:
-        print(url)
-        download(folder, url)
+def main(argv):
+    question_num = ''
+    try:
+        opts, args = getopt.getopt(argv, "hq:", ["question_num="])
+    except getopt.GetoptError:
+        print('zhihu_fetch.py -q <question_num>')
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print('zhihu_fetch.py -q <question_num>')
+            sys.exit()
+        elif opt in ("-q", "--qnum"):
+            question_num = arg
+        else:
+            print('zhihu_fetch.py -q <question_num>')
+            sys.exit()
+
+    url = "https://www.zhihu.com/question/"+question_num
+    print(url)
+    answers = fetch_all_answers(url)
+    print("start to download")
+    # folder = '292901966'
+    folder = question_num
+    for ans in answers:
+        imgs = grep_image_urls(ans['content'])
+        for url in imgs:
+            print(url)
+            download(folder, url)
+
+
+main(sys.argv[1:])

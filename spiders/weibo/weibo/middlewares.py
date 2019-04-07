@@ -5,10 +5,13 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import random
 from scrapy import signals
+from weibo.user_agents import agents
+from weibo.cookies import cookies
 
 
-class TutorialSpiderMiddleware(object):
+class WeiboSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -56,7 +59,7 @@ class TutorialSpiderMiddleware(object):
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-class TutorialDownloaderMiddleware(object):
+class WeiboDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
@@ -101,3 +104,19 @@ class TutorialDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class UserAgentMiddleware(object):
+    """ 换User-Agent """
+
+    def process_request(self, request, spider):
+        agent = random.choice(agents)
+        request.headers.setdefault("User-Agent", agent)
+
+
+class CookiesMiddleware(object):
+    """ 换Cookie """
+
+    def process_request(self, request, spider):
+        cookie = random.choice(cookies)
+        request.cookies = cookie

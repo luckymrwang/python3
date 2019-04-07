@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from tutorial.items import ProfileItem, FollowingItem, FollowedItem
+from weibo.items import ProfileItem, FollowingItem, FollowedItem
 import re
 import io
 import sys

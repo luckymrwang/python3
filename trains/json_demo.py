@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 
 print(json.__file__)
@@ -11,3 +12,10 @@ data1 = {
 json_str = json.dumps(data1)
 print("Python 原始数据：", repr(data1))
 print("JSON 对象：", json_str)
+
+a = '{"next":true}'
+b = json.loads(a)
+ne = b['next']
+print(ne)
+if ne:
+    print("yeeeeees")

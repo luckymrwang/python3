@@ -5,7 +5,10 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import random
 from scrapy import signals
+from tutorial.user_agents import agents
+from tutorial.cookies import cookies
 
 
 class TutorialSpiderMiddleware(object):
@@ -101,3 +104,19 @@ class TutorialDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class UserAgentMiddleware(object):
+    """ 换User-Agent """
+
+    def process_request(self, request, spider):
+        agent = random.choice(agents)
+        request.headers.setdefault("User-Agent", agent)
+
+
+class CookiesMiddleware(object):
+    """ 换Cookie """
+
+    def process_request(self, request, spider):
+        cookie = random.choice(cookies)
+        request.cookies = cookie
